@@ -2,11 +2,20 @@
   <div>
     <ul id="messages">
       <li v-for="message in messages" :key="message.id">
-        <p>{{ message.msg }}</p>
+        <p>{{message.sender}} says: {{ message.msg }}</p>
       </li>
     </ul>
-    <input v-model="text" autocomplete="off" @keyup.enter="sendMessage"/>
-    <button @click="sendMessage">Send</button>
+    <div v-if="!name.length">
+      <p>Enter your nickname</p>
+      <input type="text" ref="name" @keyup.enter="saveName">
+      <button @click="saveName">Continue</button>
+    </div>
+    <div v-else>
+      <button @click="name = ''"> Change nickname</button>
+      <br>
+      <input v-model="text" autocomplete="off" @keyup.enter="sendMessage"/>
+      <button @click="sendMessage">Send</button>
+    </div>
   </div>
 </template>
 
@@ -20,6 +29,7 @@ export default {
   },
   data() {
     return {
+      name: "",
       text: "",
       socket: null,
       messages: []
@@ -32,7 +42,7 @@ export default {
   },
   methods: {
     sendMessage: function() {
-      window.socket.emit('chat message', {id:new Date(), msg:this.text});
+      window.socket.emit('chat message', {id:new Date(), sender: this.name, msg:this.text});
       this.text = "";
     },
     messageReceiver: function() {
@@ -40,6 +50,9 @@ export default {
         this.messages.push(msg);
         window.scrollTo(0, document.body.scrollHeight);
       }.bind(this));
+    },
+    saveName: function() {
+      this.name = this.$refs.name.value;
     }
   }
 }

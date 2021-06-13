@@ -20,6 +20,13 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
+  
+  socket.emit("chat message", {
+    id: new Date(),
+    sender: "FIEK-Server",
+    msg: "Welcome to our server, type /command to show commands :D"
+  })
+
   socket.on('chat message', msg => {
     io.emit('chat message', msg);
   });
