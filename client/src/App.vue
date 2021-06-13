@@ -6,11 +6,17 @@
       <button @click="saveName">Continue</button>
     </div>
     <div v-else>
-      <message v-for="message in messages" :key="message.id" :message="message"></message>
-      <button @click="name = ''"> Change nickname</button>
-      <br>
-      <input v-model="text" autocomplete="off" @keyup.enter="sendMessage"/>
-      <button @click="sendMessage">Send</button>
+        <div class="place-content-end flex flex-col h-screen">
+          <div class="place-content-end flex flex-col h-screen overflow-y-scroll h-screen">
+            <message v-for="message in messages" :key="message.id" :message="message"></message>
+          </div>
+        <div class="flex h-12">
+        <button @click="name = ''"> Change nickname</button>
+        <br>
+        <input class="flex-1" v-model="text" autocomplete="off" @keyup.enter="sendMessage"/>
+        <button class="bg-red-500 p-2 px-5 text-white text-center" @click="sendMessage">Send</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
