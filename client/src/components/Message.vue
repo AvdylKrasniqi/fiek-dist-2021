@@ -1,5 +1,5 @@
 <template>
-    <div class="flex gap-2 p-1">
+    <div class="flex gap-2 p-1 odd:bg-gray-200">
         <avatar :name="message.sender"></avatar>
         <div>
             <p class="font-bold">{{message.sender}}</p>
