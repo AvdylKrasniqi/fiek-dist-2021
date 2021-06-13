@@ -19,16 +19,29 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/client/dist/index.html');
 });
 
+
+let commands = `/startvideo 
+/stopvideo 
+/changenickname`
+
 io.on('connection', (socket) => {
   
   socket.emit("chat message", {
     id: new Date(),
     sender: "FIEK-Server",
-    msg: "Welcome to our server, type /command to show commands :D"
+    msg: "Welcome to our server, type /commands to show commands :D"
   })
 
-  socket.on('chat message', msg => {
-    io.emit('chat message', msg);
+  socket.on('chat message', message => {
+    if(message.msg == "/commands"){
+      socket.emit('chat message', {
+        id: new Date(),
+        sender: "FIEK-Server", 
+        msg: commands
+      })
+      return;
+    }
+    io.emit('chat message', message);
   });
 });
 

@@ -1,19 +1,19 @@
 <template>
   <div>
-    <div v-if="!name.length">
+    <div v-show="!name.length">
       <p>Enter your nickname</p>
       <input type="text" ref="name" @keyup.enter="saveName">
       <button @click="saveName">Continue</button>
     </div>
-    <div v-else>
+    <div v-show="name.length">
         <div class="place-content-end flex flex-col h-screen">
-          <div class="place-content-end flex flex-col h-screen overflow-y-scroll h-screen">
+          <div class="place-content-end flex flex-col h-screen overflow-y-scroll h-screen" ref="messageContainer">
             <message v-for="message in messages" :key="message.id" :message="message"></message>
           </div>
         <div class="flex h-12">
         <button @click="name = ''"> Change nickname</button>
         <br>
-        <input class="flex-1" v-model="text" autocomplete="off" @keyup.enter="sendMessage"/>
+        <input class="flex-1" v-model="text" autocomplete="off" @keyup.enter="sendMessage" placeholder="What's on your mind?"/>
         <button class="bg-red-500 p-2 px-5 text-white text-center" @click="sendMessage">Send</button>
         </div>
       </div>
@@ -50,7 +50,7 @@ export default {
     messageReceiver: function() {
       window.socket.on('chat message', function(msg) {
         this.messages.push(msg);
-        window.scrollTo(0, document.body.scrollHeight);
+        this.$refs.messageContainer.scrollTop =this.$refs.messageContainer.scrollHeight;
       }.bind(this));
     },
     saveName: function() {
@@ -59,6 +59,5 @@ export default {
   }
 }
 </script>
-
 <style>
 </style>
