@@ -1,16 +1,18 @@
 <template>
   <div>
-    <ul id="messages">
-      <li v-for="message in messages" :key="message.id">
-        <p>{{message.sender}} says: {{ message.msg }}</p>
-      </li>
-    </ul>
     <div v-if="!name.length">
       <p>Enter your nickname</p>
       <input type="text" ref="name" @keyup.enter="saveName">
       <button @click="saveName">Continue</button>
     </div>
     <div v-else>
+
+    <ul id="messages">
+      <li v-for="message in messages" :key="message.id">
+        <avatar :name="message.sender"></avatar>
+        <p>{{message.sender}} says: {{ message.msg }}</p>
+      </li>
+    </ul>
       <button @click="name = ''"> Change nickname</button>
       <br>
       <input v-model="text" autocomplete="off" @keyup.enter="sendMessage"/>
@@ -21,11 +23,12 @@
 
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
-
+import Avatar from './components/Avatar.vue'
 export default {
   name: 'App',
   components: {
     // HelloWorld
+    Avatar
   },
   data() {
     return {
