@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-blue-900 text-white p-5 rounded-full w-16 h-16 text-center">{{ initials }}</div>
+    <div class="flex-shrink-0 bg-blue-900 text-white p-5 rounded-full w-16 h-16 text-center">{{ initials }}</div>
 </template>
 <script>
 

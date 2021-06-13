@@ -6,13 +6,7 @@
       <button @click="saveName">Continue</button>
     </div>
     <div v-else>
-
-    <ul id="messages">
-      <li v-for="message in messages" :key="message.id">
-        <avatar :name="message.sender"></avatar>
-        <p>{{message.sender}} says: {{ message.msg }}</p>
-      </li>
-    </ul>
+      <message v-for="message in messages" :key="message.id" :message="message"></message>
       <button @click="name = ''"> Change nickname</button>
       <br>
       <input v-model="text" autocomplete="off" @keyup.enter="sendMessage"/>
@@ -20,15 +14,14 @@
     </div>
   </div>
 </template>
-
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
-import Avatar from './components/Avatar.vue'
+import Message from './components/Message.vue'
 export default {
   name: 'App',
   components: {
     // HelloWorld
-    Avatar
+    Message
   },
   data() {
     return {
