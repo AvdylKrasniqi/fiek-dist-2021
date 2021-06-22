@@ -15,9 +15,9 @@ const io = require('socket.io')(http, {
 });
 const port = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/client/dist/index.html');
-});
+// app.get('/', (req, res) => {
+//   res.sendFile(__dirname + '/client/dist/index.html');
+// });
 
 
 let commands = `/startvideo 

@@ -3,7 +3,7 @@
         <avatar :name="message.sender"></avatar>
         <div>
             <p class="font-bold">{{message.sender}}</p>
-            <p class="whitespace-pre">{{ message.msg }}</p>
+            <p class="whitespace-preline">{{ message.msg }}</p>
         </div>
     </div>
 </template>

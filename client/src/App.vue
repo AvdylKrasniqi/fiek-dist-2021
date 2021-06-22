@@ -1,9 +1,13 @@
 <template>
   <div>
     <div v-show="!name.length">
-      <p>Enter your nickname</p>
-      <input type="text" ref="name" @keyup.enter="saveName">
-      <button @click="saveName">Continue</button>
+      <div class="flex justify-center items-center h-screen">
+        <div class="text-center">
+          <h1 class="text-2xl p-2" ref="nicknameInput" autofocus>Enter your nickname</h1>
+          <input type="text" ref="name" @keyup.enter="saveName" class="input border border-gray-300 focus:outline-none p-2 px-3" placeholder="undefined, jk">
+          <button @click="saveName" class="bg-red-500 p-2 px-5 text-white text-center">Continue</button>
+        </div>
+      </div>
     </div>
     <div v-show="name.length">
         <div class="place-content-end flex flex-col h-screen">
@@ -11,9 +15,7 @@
             <message v-for="message in messages" :key="message.id" :message="message"></message>
           </div>
         <div class="flex h-12">
-        <button @click="name = ''"> Change nickname</button>
-        <br>
-        <input class="flex-1" v-model="text" autocomplete="off" @keyup.enter="sendMessage" placeholder="What's on your mind?"/>
+        <input class="flex-1 border border-gray-300 px-2 focus:outline-none" v-model="text" autocomplete="off" @keyup.enter="sendMessage" placeholder="What's on your mind?"/>
         <button class="bg-red-500 p-2 px-5 text-white text-center" @click="sendMessage">Send</button>
         </div>
       </div>
@@ -39,11 +41,13 @@ export default {
   },
   mounted(){
     // socket = window.io();
-    window.socket = window.io("http://192.168.0.107:3000");
+    // window.socket = window.io("http://192.168.0.107:3000");
+    window.socket = window.io("http://192.168.1.111:3000");
     this.messageReceiver();
   },
   methods: {
     sendMessage: function() {
+      if(this.text == "/changenickname") {this.name = ""; }
       window.socket.emit('chat message', {id:new Date(), sender: this.name, msg:this.text});
       this.text = "";
     },
