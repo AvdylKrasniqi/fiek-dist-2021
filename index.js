@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 const cors = require('cors');
 const morgan = require('morgan');
+const { ExpressPeerServer } = require("peer");
 
-app.use(express.static('./client/dist/'))
 app.use(morgan('tiny'));
 app.use(cors());
 
@@ -14,6 +14,16 @@ const io = require('socket.io')(http, {
   }
 });
 const port = process.env.PORT || 3000;
+
+
+const peerServer = ExpressPeerServer(http, {
+  debug: true,
+});
+
+app.use("/peerjs", peerServer);
+
+app.use(express.static('./client/dist/'))
+
 
 // app.get('/', (req, res) => {
 //   res.sendFile(__dirname + '/client/dist/index.html');
@@ -30,7 +40,13 @@ io.on('connection', (socket) => {
     id: new Date(),
     sender: "FIEK-Server",
     msg: "Welcome to our server, type /commands to show commands :D"
-  })
+  });
+
+
+  socket.on("join-room", (userId) => {
+    socket.broadcast.emit("user-connected", userId);
+  });
+
 
   socket.on('chat message', message => {
     if(message.msg == "/commands"){

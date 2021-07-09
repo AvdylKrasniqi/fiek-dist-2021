@@ -46,16 +46,7 @@ export default {
       socket: null,
       messages: [],
       localStream: null,
-      remoteStream: null,
-      pc: null,
-      server: {
-        iceServers: [
-            {
-                urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"]
-            }
-        ],
-        iceCandidatePoolSize: 10,
-      }
+      peer: null,
     }
   },
   mounted(){
@@ -84,23 +75,49 @@ export default {
     saveName: function() {
       this.name = this.$refs.name.value;
     },
-    startVideo: async function(){
-      this.localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      this.remoteStream = new MediaStream();
-      //
-      // this.localStream.getTracks().forEach((track) => {
-      //   _this.pc.addTrack(track, _this.localStream);
-      // });
-      
-      // this.pc.ontrack = event => {
-      //   event.streams[0].getTrack().forEach(track => {
-      //     _this.remoteStream.addTrack(track);
-      //   })
-      // }
 
-      this.$refs.webcamVideo.srcObject = this.localStream;
-      this.$refs.webcamVideo.play();
-      // this.$refs.remoteVideo.srcObject = this.remoteStream;
+    connectToUser: function(userId, stream) {
+      let call = this.peer.call(userId, stream);
+      
+      call.on("stream", (userVideoStream) => {
+        this.$refs.remoteVideo.srcObject = userVideoStream;
+        this.$refs.remoteVideo.play();
+      });
+    },
+
+    startVideo: async function(){
+      this.peer = new window.Peer(undefined, {
+        path: "/peerjs",
+        host: "/",
+        port: "3000",
+      });
+
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(
+        (stream) => {
+          this.localStream = stream; 
+          this.$refs.webcamVideo.srcObject = this.localStream;
+          this.$refs.webcamVideo.play();
+
+          this.peer.on("call", (call) => {
+            call.answer(stream);
+            call.on("stream", (userVideoStream) => {
+              this.$refs.remoteVideo.srcObject = userVideoStream;
+              this.$refs.remoteVideo.play();
+            })
+          });
+
+          window.socket.on("user-connected", (userId) => {
+            this.connectToUser(userId, stream)
+          });
+
+        }
+      );
+
+
+      this.peer.on("open", (id) => {
+        window.socket.emit("join-room", id);
+      });
+
     }
   }
 }
