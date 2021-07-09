@@ -52,7 +52,7 @@ export default {
   mounted(){
     // socket = window.io();
     // window.socket = window.io("http://192.168.0.107:3000");
-    window.socket = window.io("http://192.168.1.111:3000");
+    window.socket = window.io("https://192.168.1.111:3000");
     this.pc = new RTCPeerConnection();
     this.messageReceiver();
 

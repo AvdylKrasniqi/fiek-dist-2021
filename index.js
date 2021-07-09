@@ -3,12 +3,16 @@ const app = express();
 const cors = require('cors');
 const morgan = require('morgan');
 const { ExpressPeerServer } = require("peer");
+const fs = require("fs");
 
 app.use(morgan('tiny'));
 app.use(cors());
 
-const http = require('http').Server(app);
-const io = require('socket.io')(http, {
+const https = require('https').createServer({
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+}, app);
+const io = require('socket.io')(https, {
   cors: {
     origin: "*"
   }
@@ -16,7 +20,7 @@ const io = require('socket.io')(http, {
 const port = process.env.PORT || 3000;
 
 
-const peerServer = ExpressPeerServer(http, {
+const peerServer = ExpressPeerServer(https, {
   debug: true,
 });
 
@@ -46,7 +50,7 @@ io.on('connection', (socket) => {
   socket.on("join-room", (userId) => {
     socket.broadcast.emit("user-connected", userId);
   });
-
+  
 
   socket.on('chat message', message => {
     if(message.msg == "/commands"){
@@ -61,6 +65,6 @@ io.on('connection', (socket) => {
   });
 });
 
-http.listen(port, () => {
-  console.log(`Socket.IO server running at http://localhost:${port}/`);
+https.listen(port, () => {
+  console.log(`Socket.IO server running at https://localhost:${port}/`);
 });
