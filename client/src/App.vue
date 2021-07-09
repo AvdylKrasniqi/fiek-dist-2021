@@ -12,7 +12,14 @@
     </div>
     <div v-show="name.length">
         <div class="place-content-end flex flex-col h-screen">
-          <div class="place-content-end flex flex-col h-screen overflow-y-scroll h-screen" ref="messageContainer">
+          <div class="bg-black h-24 w-24">
+              <video ref="webcamVideo"></video>
+          </div>
+
+          <div class="bg-black h-24 w-24">
+              <video ref="remoteVideo"></video>
+          </div>
+          <div class="place-content-end flex flex-col h-screen overflow-y-scroll h-screen" ref="messagecontainer">
             <message v-for="message in messages" :key="message.id" :message="message"></message>
           </div>
         <div class="flex h-12">
@@ -37,29 +44,63 @@ export default {
       name: "",
       text: "",
       socket: null,
-      messages: []
+      messages: [],
+      localStream: null,
+      remoteStream: null,
+      pc: null,
+      server: {
+        iceServers: [
+            {
+                urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"]
+            }
+        ],
+        iceCandidatePoolSize: 10,
+      }
     }
   },
   mounted(){
     // socket = window.io();
     // window.socket = window.io("http://192.168.0.107:3000");
     window.socket = window.io("http://192.168.1.111:3000");
+    this.pc = new RTCPeerConnection();
     this.messageReceiver();
+
   },
   methods: {
     sendMessage: function() {
-      if(this.text == "/changenickname") {this.name = ""; }
       window.socket.emit('chat message', {id:new Date(), sender: this.name, msg:this.text});
+      if(this.text == "/changenickname") {this.name = ""; }
+      if(this.text == "/startvideo") this.startVideo();
       this.text = "";
     },
     messageReceiver: function() {
       window.socket.on('chat message', function(msg) {
         this.messages.push(msg);
-        this.$refs.messageContainer.scrollTop =this.$refs.messageContainer.scrollHeight;
+
+        this.$refs.messagecontainer.scrollTop = this.$refs.messagecontainer.scrollHeight;
+
       }.bind(this));
     },
     saveName: function() {
       this.name = this.$refs.name.value;
+    },
+    startVideo: async function(){
+      this.localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      this.remoteStream = new MediaStream();
+      //
+      // this.localStream.getTracks().forEach((track) => {
+      //   _this.pc.addTrack(track, _this.localStream);
+      // });
+      
+      // this.pc.ontrack = event => {
+      //   event.streams[0].getTrack().forEach(track => {
+      //     _this.remoteStream.addTrack(track);
+      //   })
+      // }
+
+      this.$refs.webcamVideo.srcObject = this.localStream;
+      this.$refs.webcamVideo.play();
+      // this.$refs.remoteVideo.srcObject = this.remoteStream;
     }
   }
 }
