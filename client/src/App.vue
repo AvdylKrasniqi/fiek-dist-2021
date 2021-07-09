@@ -3,6 +3,7 @@
     <div v-show="!name.length">
       <div class="flex justify-center items-center h-screen">
         <div class="text-center">
+          <img class="w-96" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/University_of_Prishtina_logo.svg/1026px-University_of_Prishtina_logo.svg.png" alt="">
           <h1 class="text-2xl p-2" ref="nicknameInput" autofocus>Enter your nickname</h1>
           <input type="text" ref="name" @keyup.enter="saveName" class="input border border-gray-300 focus:outline-none p-2 px-3" placeholder="undefined, jk">
           <button @click="saveName" class="bg-red-500 p-2 px-5 text-white text-center">Continue</button>
