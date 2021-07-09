@@ -12,13 +12,14 @@
     </div>
     <div v-show="name.length">
         <div class="place-content-end flex flex-col h-screen">
-          <div class="bg-black h-24 w-24">
+          <draggable-div>
+            <template #header>My video:</template>
               <video ref="webcamVideo"></video>
-          </div>
-
-          <div class="bg-black h-24 w-24">
+          </draggable-div>
+          <draggable-div>
+            <template #header>Other guy:</template>
               <video ref="remoteVideo"></video>
-          </div>
+          </draggable-div>
           <div class="place-content-end flex flex-col h-screen overflow-y-scroll h-screen" ref="messagecontainer">
             <message v-for="message in messages" :key="message.id" :message="message"></message>
           </div>
@@ -33,11 +34,13 @@
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
 import Message from './components/Message.vue'
+import DraggableDiv from './components/DraggableDiv.vue'
 export default {
   name: 'App',
   components: {
     // HelloWorld
-    Message
+    Message,
+    DraggableDiv
   },
   data() {
     return {
